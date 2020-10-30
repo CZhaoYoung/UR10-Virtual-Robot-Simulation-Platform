@@ -41,63 +41,24 @@ class MoveItIkDemo:
                
         # 设置机械臂工作空间中的目标位姿，位置使用x、y、z坐标描述，
         # 姿态使用四元数描述，基于base_link坐标系
-        target_pose = PoseStamped()
-        target_pose.header.frame_id = reference_frame
-        target_pose.header.stamp = rospy.Time.now()
+        target_pose = Pose()
         
         # plan 1
-        target_pose.pose.position.x = 0.4
-        target_pose.pose.position.y = 0.1
-        target_pose.pose.position.z = 0.4
-        target_pose.pose.orientation.w = 1.0
+        target_pose.position.x = 0.4
+        target_pose.position.y = 0.1
+        target_pose.position.z = 0.4
+        target_pose.orientation.w = 1.0
 
-
-        # plan 2
-        # target_pose.pose.position.x = 0.858
-        # target_pose.pose.position.y = -0.0609
-        # target_pose.pose.position.z = 0.467
-        # target_pose.pose.orientation.x = 0.706
-        # target_pose.pose.orientation.y = 0.706
-        # target_pose.pose.orientation.z = -0.014
-        # target_pose.pose.orientation.w = -0.014
-
-        # plan 3
-        # target_pose.pose.position.x = 0.92681
-        # target_pose.pose.position.y = 0.25311
-        # target_pose.pose.position.z = 0.28889
-        # target_pose.pose.orientation.x = 0.68725
-        # target_pose.pose.orientation.y = 0.68723
-        # target_pose.pose.orientation.z = 0.16642
-        # target_pose.pose.orientation.w = -0.16646
         
         # 设置机器臂当前的状态作为运动初始状态
         arm.set_start_state_to_current_state()
         
         # 设置机械臂终端运动的目标位姿
-        arm.set_pose_target(target_pose, end_effector_link)
-        
-        # 规划运动路径
-        traj = arm.plan()
-        
-        # 按照规划的运动路径控制机械臂运动
-        arm.execute(traj)
-        rospy.sleep(3)
-         
-        # 控制机械臂终端向右移动5cm
-        # 使用shift_pose_target函数，argv[0]=0,1,2,3,4,5;对应x,y,z,r,p,y
-        
-        # arm.shift_pose_target(1, -0.05, end_effector_link)
-        # arm.go()
-        # rospy.sleep(1)
-  
-        # # 控制机械臂终端反向旋转90度
-        # arm.shift_pose_target(3, -1.57, end_effector_link)
-        # arm.go()
-        # rospy.sleep(1)
-           
-        # 控制机械臂回到初始化位置
-        arm.set_named_target('home')
-        arm.go()
+        arm.set_pose_target(target_pose)
+        arm.go(wait=True)
+        arm.stop()
+        arm.clear_pose_targets()
+
 
         # 关闭并退出moveit
         moveit_commander.roscpp_shutdown()
@@ -105,6 +66,3 @@ class MoveItIkDemo:
 
 if __name__ == "__main__":
     MoveItIkDemo()
-
-    
-    

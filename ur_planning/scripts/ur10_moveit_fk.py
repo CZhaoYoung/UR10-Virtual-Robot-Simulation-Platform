@@ -20,7 +20,7 @@ class MoveItFkDemo:
         # gripper = moveit_commander.MoveGroupCommander('gripper')
         
         # 设置机械臂和夹爪的允许误差值,单位弧度
-        arm.set_goal_joint_tolerance(0.001)
+        arm.set_goal_joint_tolerance(0.0001)
         # gripper.set_goal_joint_tolerance(0.001)
         
         # 控制机械臂先回到初始化位置
