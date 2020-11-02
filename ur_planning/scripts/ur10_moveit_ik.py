@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import rospy, sys
+from copy import deepcopy
 import moveit_commander
 from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
 from geometry_msgs.msg import PoseStamped, Pose
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+
 
 class MoveItIkDemo:
     def __init__(self):
@@ -42,14 +44,17 @@ class MoveItIkDemo:
         # 设置机械臂工作空间中的目标位姿，位置使用x、y、z坐标描述，
         # 姿态使用四元数描述，基于base_link坐标系
         target_pose = PoseStamped()
-        target_pose.header.frame_id = reference_frame
+	NewPose = deepcopy(rospy.Subscriber("chatter", PoseStamped, queue_size = 1))
+        
+	target_pose.header.frame_id = reference_frame
         target_pose.header.stamp = rospy.Time.now()
         
         # plan 1
-        target_pose.pose.position.x = 0.4
-        target_pose.pose.position.y = 0.1
-        target_pose.pose.position.z = 0.4
-        target_pose.pose.orientation.w = 1.0
+	
+        target_pose.pose.position.x = Newpose.pose.pose.position.x
+        target_pose.pose.position.y = Newpose.pose.pose.position.y
+        target_pose.pose.position.z = Newpose.pose.pose.position.z
+        target_pose.pose.orientation.w = Newpose.pose.pose.orientation.x
 
 
         # plan 2
@@ -102,6 +107,10 @@ class MoveItIkDemo:
         # 关闭并退出moveit
         moveit_commander.roscpp_shutdown()
         moveit_commander.os._exit(0)
+
+    	# spin() simply keeps python from exiting until this node is stopped
+    	rospy.spin()
+
 
 if __name__ == "__main__":
     MoveItIkDemo()

@@ -32,6 +32,6 @@
     <include file="$(find ur10_moveit_config)/launch/move_group.launch" />
 
     <!-- 启动rviz可视化界面 -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find marm_planning)/config/pick_and_place.rviz" required="true" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ur_planning)/config/ur10.rviz" required="true" />
 
 </launch>
