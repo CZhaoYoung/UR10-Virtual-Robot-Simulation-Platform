@@ -20,7 +20,7 @@ class MoveItIkDemo:
         rospy.init_node('ur10_moveit_ik')
                 
         # 初始化需要使用move group控制的机械臂中的arm group
-        arm = moveit_commander.MoveGroupCommander('manipulator')
+        arm = moveit_commander.MoveGroupCommander('')
                 
         # 获取终端link的名称
         end_effector_link = arm.get_end_effector_link()
@@ -34,7 +34,7 @@ class MoveItIkDemo:
         
         # 设置位置(单位：米)和姿态（单位：弧度）的允许误差
         arm.set_goal_position_tolerance(0.001)
-        arm.set_goal_orientation_tolerance(0.005)
+        arm.set_goal_orientation_tolerance(0.01)
         
         # 控制机械臂先回到初始化位置
         arm.set_named_target('home')
@@ -44,22 +44,23 @@ class MoveItIkDemo:
         # 设置机械臂工作空间中的目标位姿，位置使用x、y、z坐标描述，
         # 姿态使用四元数描述，基于base_link坐标系
         target_pose = PoseStamped()
-	NewPose = deepcopy(rospy.Subscriber("chatter", PoseStamped, queue_size = 1))
-        
-	target_pose.header.frame_id = reference_frame
+        target_pose.header.frame_id = reference_frame
         target_pose.header.stamp = rospy.Time.now()
         
         # plan 1
 	
-        target_pose.pose.position.x = Newpose.pose.pose.position.x
-        target_pose.pose.position.y = Newpose.pose.pose.position.y
-        target_pose.pose.position.z = Newpose.pose.pose.position.z
-        target_pose.pose.orientation.w = Newpose.pose.pose.orientation.x
+        target_pose.pose.position.x = 0.096
+        target_pose.pose.position.y = -1.1368
+        target_pose.pose.position.z = -0.1795
+        target_pose.pose.orientation.x = 0.61
+        target_pose.pose.orientation.y = -0.5366
+        target_pose.pose.orientation.z = -0.4377
+        target_pose.pose.orientation.w = -0.3850
 
 
         # plan 2
         # target_pose.pose.position.x = 0.858
-        # target_pose.pose.position.y = -0.0609
+        # target_pose.pose.position.y = 0.0609
         # target_pose.pose.position.z = 0.467
         # target_pose.pose.orientation.x = 0.706
         # target_pose.pose.orientation.y = 0.706
@@ -80,6 +81,9 @@ class MoveItIkDemo:
         
         # 设置机械臂终端运动的目标位姿
         arm.set_pose_target(target_pose, end_effector_link)
+
+        end_effector_link = arm.get_end_effector_link()
+        print("========= end_effector: %s" % end_effector_link)
         
         # 规划运动路径
         traj = arm.plan()

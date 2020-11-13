@@ -11,9 +11,9 @@ Panels:
         - /MotionPlanning1/Planned Path1
         - /RobotModel1
         - /RobotModel1/Links1
-        - /RobotModel1/Links1/grasping_frame1
+        - /RobotModel1/Links1/forearm_link1
       Splitter Ratio: 0.519512177
-    Tree Height: 633
+    Tree Height: 922
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -21,6 +21,8 @@ Panels:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
+Toolbars:
+  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
@@ -42,9 +44,14 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: moveit_rviz_plugin/MotionPlanning
+    - Acceleration_Scaling_Factor: 1
+      Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       Move Group Namespace: ""
+      MoveIt_Allow_Approximate_IK: false
+      MoveIt_Allow_External_Program: false
+      MoveIt_Allow_Replanning: false
+      MoveIt_Allow_Sensor_Positioning: false
       MoveIt_Goal_Tolerance: 0
       MoveIt_Planning_Attempts: 10
       MoveIt_Planning_Time: 5
@@ -70,56 +77,54 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          bottom_link:
+          ee_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          grasping_frame:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          gripper_finger_link1:
+          forearm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          gripper_finger_link2:
+          shoulder_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link1:
+          tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          upper_arm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link2:
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          wrist_1_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link3:
+          wrist_2_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link6:
+          wrist_3_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -169,56 +174,54 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          bottom_link:
+          ee_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          grasping_frame:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          gripper_finger_link1:
+          forearm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          gripper_finger_link2:
+          shoulder_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link1:
+          tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          upper_arm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link2:
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          wrist_1_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link3:
+          wrist_2_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          link4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          link6:
+          wrist_3_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -227,6 +230,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: false
       Value: true
+      Velocity_Scaling_Factor: 1
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -237,56 +241,54 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        bottom_link:
+        ee_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        grasping_frame:
+        forearm_link:
           Alpha: 1
-          Show Axes: false
+          Show Axes: true
           Show Trail: true
-        gripper_finger_link1:
+          Value: true
+        shoulder_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        gripper_finger_link2:
+        tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        upper_arm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        link1:
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wrist_1_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        link2:
+        wrist_2_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        link3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        link6:
+        wrist_3_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -300,6 +302,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 184; 184; 184
+    Default Light: true
     Fixed Frame: base_link
     Frame Rate: 30
   Name: root
@@ -312,7 +315,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.35690749
+      Distance: 3.76281142
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -324,28 +327,29 @@ Visualization Manager:
         Z: 0.243915334
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.300397664
+      Pitch: 0.525397897
       Target Frame: base_footprint
       Value: Orbit (rviz)
-      Yaw: 5.85857487
+      Yaw: 0.625388861
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 768
+  Height: 1056
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
   MotionPlanning:
     collapsed: false
-  MotionPlanning - Slider:
+  MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001ac000002bafc0200000007fb000000100044006900730070006c0061007900730100000028000002ba000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a005600690065007700730000000124000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670000000139000001900000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001670000029b000001cc00ffffff000003c4000002ba00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001ac000003dafc0200000008fb000000100044006900730070006c0061007900730100000028000003da000000d600fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000a005600690065007700730000000124000000b0000000ac00fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670000000139000001900000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000000000000000fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001670000029b0000018100fffffffb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004200ffffff000005ce000003da00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1398
-  X: 291
-  Y: 53
+  Width: 1920
+  X: 1080
+  Y: 24

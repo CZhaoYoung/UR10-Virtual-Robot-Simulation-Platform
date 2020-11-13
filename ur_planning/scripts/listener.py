@@ -1,37 +1,52 @@
-#!/usr/bin/env python
+#!/usr/bin/env python  
 import rospy
-import time
-from std_msgs.msg import String
-from geometry_msgs.msg import Twist
-from turtlesim.msg import Pose
+import math
+import tf2_ros
+import geometry_msgs.msg
+import turtlesim.srv
 
-def topic_callback(msg):
-    if not isinstance(msg, Pose):
-    	return
-    print("x =", msg.x)
-    print("y =", msg.y)
-    print("theta =", msg.theta)
-    time.sleep(10)
- 
-def callback(data):
-    rospy.loginfo("I heard %s",data.x)
-    time.sleep(10)
 
-def listener():
 
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
-    rospy.init_node('listener', anonymous=True)
 
-    NewPose = rospy.Subscriber("/turtle1/pose", Pose, callback)
-    # NewPose = rospy.Subscriber("/vrpn_client_node/cf4/pose", PoseStamped, topic_callback)
-    # print(NewPose.callback)
 
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
+def listen():
+    rospy.init_node('tf2_turtle_listener')
+
+    tfBuffer = tf2_ros.Buffer()
+
+    #build tf listener object
+    listener = tf2_ros.TransformListener(tfBuffer)
+
+    rospy.wait_for_service('spawn')
+
+    # rospy.ServiceProxy method details:
+    # __init__(Constructor)
+    # 1.name(str)
+    # 2.service_class
+    spawner = rospy.ServiceProxy('spawn', turtlesim.srv.Spawn)
+    turtle_name = rospy.get_param('turtle', 'turtle2')
+    print (turtle_name)
+
+    # __call__(Call operator)
+    # turtlesim/Spawn Service
+    # float32 x,y,theta
+    # string name
+    spawner(4, 2, 0, turtle_name)
+
+    # 1HZ
+    rate = rospy.Rate(0.25)
+    while not rospy.is_shutdown():
+        try:
+            trans = tfBuffer.lookup_transform(turtle_name, 'turtle1', rospy.Time())
+            return trans
+            continue
+
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+            continue
+            
 
 if __name__ == '__main__':
-    listener()
+
+    print(listen())
+    # [x,y]= listen()
+    # print("x, y= ", [x,y])

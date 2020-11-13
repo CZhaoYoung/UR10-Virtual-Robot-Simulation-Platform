@@ -14,7 +14,8 @@ class MoveItFkDemo:
         rospy.init_node('ur10_moveit_fk', anonymous=True)
  
         # 初始化需要使用move group控制的机械臂中的arm group
-        arm = moveit_commander.MoveGroupCommander('manipulator')
+        arm = moveit_commander.MoveGroupCommander('arm')
+        # arm = moveit_commander.MoveGroupCommander('manipulator')
         
         # 初始化需要使用move group控制的机械臂中的gripper group
         # gripper = moveit_commander.MoveGroupCommander('gripper')
@@ -34,7 +35,8 @@ class MoveItFkDemo:
         # rospy.sleep(1)
          
         # 设置机械臂的目标位置，使用六轴的位置数据进行描述（单位：弧度）
-        joint_positions = [-0.0867, -1.274, 0.02832, 0.0820, -1.273, -0.003]
+        joint_positions = [0.0867, 1.274, 0.02832]
+        # joint_positions = [-0.0867, -1.274, 0.02832, 0.0820, -1.273, -0.003]
         # joint_positions = [1.5707, 1.5707, 0, 1.5707, 0, 1.5707]
         arm.set_joint_value_target(joint_positions)
                  

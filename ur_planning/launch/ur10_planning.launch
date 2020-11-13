@@ -29,7 +29,9 @@
 
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
 
-    <include file="$(find ur10_moveit_config)/launch/move_group.launch" />
+    <include file="$(find New_ur10_moveit_config)/launch/move_group.launch" />
+    <!-- <include file="$(find ur10_moveit_config)/launch/move_group.launch" /> -->
+
 
     <!-- 启动rviz可视化界面 -->
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ur_planning)/config/ur10.rviz" required="true" />
