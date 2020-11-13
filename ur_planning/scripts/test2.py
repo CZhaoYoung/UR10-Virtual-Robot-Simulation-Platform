@@ -8,7 +8,7 @@ import time
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
-import turtlesim.msg
+from turtlesim.msg import Pose
 
 import listener
 
@@ -43,25 +43,6 @@ def all_close(goal, actual, tolerance):
     return True
 
 
-def call_back(msg):
-    if not isinstance(msg, Pose):
-        return
-
-    time.sleep(2)
-
-    print(msg)
-    print("")
-    tutorial = MoveIt_Python_Interface()
-    tutorial.go_to_pose_goal(msg.x, msg.y)
-
-    # new_msg  = copy.deepcopy(msg)
-    # # test 1
-    # print(new_msg)
-    # print("")
-    # tutorial = MoveIt_Python_Interface()
-    # tutorial.go_to_pose_goal(new_msg.x, new_msg.y)
-
-
 class MoveIt_Python_Interface():
     def __init__(self):
         # --SETUP--
@@ -83,10 +64,6 @@ class MoveIt_Python_Interface():
         display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
                                                         moveit_msgs.msg.DisplayTrajectory,
                                                         queue_size=20)
-
-        new_pose = rospy.Subscriber("/turtle1/pose", turtlesim.msg.Pose, call_back)
-
-
         # --BASIC_INFO--
         # the reference name of the robot
         planning_frame = group.get_planning_frame()
@@ -111,11 +88,9 @@ class MoveIt_Python_Interface():
         self.scene = scene
         self.group = group
         self.display_trajectory_publisher = display_trajectory_publisher
-        self.new_pose = new_pose
         self.planning_frame = planning_frame
         self.eef_link = end_effector_link
         self.group_names = group_names
-
 
     def go_home(self):
         group = self.group
@@ -124,7 +99,6 @@ class MoveIt_Python_Interface():
         group.set_named_target('home')
         group.go()
         group.stop()
-
 
     def go_to_joint_state(self):
 
@@ -148,10 +122,10 @@ class MoveIt_Python_Interface():
         current_joints = self.group.get_current_joint_values()
         return all_close(joint_goal, current_joints, 0.01)
 
-
     def go_to_pose_goal(self, x, y):
 
         group = self.group
+        eef_link = self.eef_link
 
         # --IK PLANNING--
         pose_goal = geometry_msgs.msg.Pose()
@@ -162,11 +136,14 @@ class MoveIt_Python_Interface():
         # pose_goal.position.y = 0.1
         # pose_goal.position.z = 0.4
 
-        pose_goal.orientation.w = 1.0
         pose_goal.position.x = x/10    # 2d simulation only x & y
         pose_goal.position.y = y/10
-        pose_goal.position.z = 0
-        group.set_pose_target(pose_goal)
+        pose_goal.position.z =  0.467
+        pose_goal.orientation.w = -0.014
+        pose_goal.orientation.x = 0.706
+        pose_goal.orientation.y = 0.706
+        pose_goal.orientation.z = -0.014
+        group.set_pose_target(pose_goal, eef_link)
 
         plan = group.go(wait = True)
         group.stop()
@@ -174,96 +151,113 @@ class MoveIt_Python_Interface():
         group.clear_pose_targets()
 
         current_pose = self.group.get_current_pose().pose
+
+        print("current_pose: ", current_pose)
+        print("")
+        print("get_goal_position_tolerance: ", self.group.get_goal_position_tolerance())
+
         return all_close(pose_goal, current_pose, 0.01)
 
+	def plan_cartesian_path(self, scale = 1):
 
-    def plan_cartesian_path(self, scale = 1)
+		group = self.group
+		# --CARTESIAN PLANNING-
+		waypoints = []
 
-    	group = self.group
+		wpose = group.get_current_pose().pose
+		wpose.position.z -= scale * 0.1  # First move up (z)
+		wpose.position.y += scale * 0.2  # and sideways (y)
 
-    	# --CARTESIAN PLANNING--
-	    waypoints = []
+		waypoints.append(copy.deepcopy(wpose))
 
-	    wpose = group.get_current_pose().pose
-	    wpose.position.z -= scale * 0.1  # First move up (z)
-	    wpose.position.y += scale * 0.2  # and sideways (y)
+		wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
+		waypoints.append(copy.deepcopy(wpose))
 
-	    waypoints.append(copy.deepcopy(wpose))
+		wpose.position.y -= scale * 0.1  # Third move sideways (y)
+		waypoints.append(copy.deepcopy(wpose))
 
-	    wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
-	    waypoints.append(copy.deepcopy(wpose))
+		(plan, fraction) = group.compute_cartesian_path(
+		                                   waypoints,   # waypoints to follow
+		                                   0.01,        # eef_step 1cm
+		                                   0.0)         # jump_threshold
 
-	    wpose.position.y -= scale * 0.1  # Third move sideways (y)
-	    waypoints.append(copy.deepcopy(wpose))
-
-	    (plan, fraction) = group.compute_cartesian_path(
-	                                       waypoints,   # waypoints to follow
-	                                       0.01,        # eef_step 1cm
-	                                       0.0)         # jump_threshold
-
-	    # Note: We are just planning, not asking move_group to actually move the robot yet:
-	    return plan, fraction
-
+		# Note: We are just planning, not asking move_group to actually move the robot yet:
+		return plan, fraction
 
 	def display_trajectory(self, plan):
 
-	    robot = self.robot
-	    display_trajectory_publisher = self.display_trajectory_publisher
+		robot = self.robot
+		display_trajectory_publisher = self.display_trajectory_publisher
 
-	    # --DISPLAY A TRAJECTORY
-	    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-	    display_trajectory.trajectory_start = robot.get_current_state()
-	    display_trajectory.trajectory.append(plan)
+		# --DISPLAY A TRAJECTORY
+		display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+		display_trajectory.trajectory_start = robot.get_current_state()
+		display_trajectory.trajectory.append(plan)
 
-	    display_trajectory_publisher.publish(display_trajectory)
-
+		display_trajectory_publisher.publish(display_trajectory)
 
 	def execute_plan(self, plan):
 
 		group = self.group
 		group.execute(plan, wait = True)
 
+global MOVE
+MOVE = MoveIt_Python_Interface()
+
+def call_back(msg):
+    if not isinstance(msg, Pose):
+        return
+
+    time.sleep(1)
+
+    print("[x,y] = ", msg.x, msg.y)
+    MOVE.go_to_pose_goal(msg.x, msg.y)
+
+    # new_msg  = copy.deepcopy(msg)
+    # # test 1
+    # print(new_msg)
+    # print("")
+    # MOVE = MoveIt_Python_Interface()
+    # MOVE.go_to_pose_goal(new_msg.x, new_msg.y)
 
 
-	def listener(self):
-
-		new_pose = self.new_pose
-    	rospy.spin()
+def listener():
+	new_pose = rospy.Subscriber("/turtle1/pose", Pose, call_back, queue_size = 1)
+	rospy.spin()
 
 
 def main():
 
     try:
+		print ("============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ...")
+		raw_input()
+		MOVE = MoveIt_Python_Interface()
 
-        print ("============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ...")
-        raw_input()
-        tutorial = MoveIt_Python_Interface()
+		print ("============ Press `Enter` to execute a movement using a joint state goal ...")
+		raw_input()
+		MOVE.go_to_joint_state()
 
-        print ("============ Press `Enter` to execute a movement using a joint state goal ...")
-        raw_input()
-        tutorial.go_to_joint_state()
+		print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		raw_input()
+		MOVE.go_to_pose_goal(8.58, 0.609)
+		MOVE.go_home()
 
-        print ("============ Press `Enter` to execute a movement using a pose goal ...")
-        raw_input()
-        tutorial.go_to_pose_goal(0.7, 0.3)
-        tutorial.go_home()
+		# print ("============ Press `Enter` to plan and display a Cartesian path ...")
+		# raw_input()
+		# cartesian_plan, fraction = MOVE.plan_cartesian_path()
 
-        print ("============ Press `Enter` to plan and display a Cartesian path ...")
-	    raw_input()
-	    cartesian_plan, fraction = tutorial.plan_cartesian_path()
+		# print ("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
+		# raw_input()
+		# MOVE.display_trajectory(cartesian_plan)
 
-	    print ("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
-	    raw_input()
-	    tutorial.display_trajectory(cartesian_plan)
+		# print ("============ Press `Enter` to execute a saved path ...")
+		# raw_input()
+		# MOVE.execute_plan(cartesian_plan)
 
-	    print ("============ Press `Enter` to execute a saved path ...")
-	    raw_input()
-	    tutorial.execute_plan(cartesian_plan)
-
-        print ("============ Press `Enter` to execute a movement using a pose goal ...")
-        raw_input()
-        tutorial.listener()
-        tutorial.go_home()
+		print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		raw_input()
+		listener()
+		MOVE.go_home()
 
     except rospy.ROSInterruptException:
         return

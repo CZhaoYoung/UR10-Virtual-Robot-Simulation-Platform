@@ -29,7 +29,7 @@
 
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
 
-    <include file="$(find New_ur10_moveit_config)/launch/move_group.launch" />
+    <include file="$(find ur10_moveit_config)/launch/move_group.launch" />
     <!-- <include file="$(find ur10_moveit_config)/launch/move_group.launch" /> -->
 
 

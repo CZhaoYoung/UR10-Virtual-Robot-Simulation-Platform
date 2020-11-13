@@ -35,7 +35,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('listener', anonymous=True)
 
-    NewPose = rospy.Subscriber("/turtle1/pose", Pose, test_callback)
+    NewPose = rospy.Subscriber("/turtle1/pose", Pose, test_callback, queue_size=1)
 
     # NewPose = rospy.Subscriber("/vrpn_client_node/cf4/pose", PoseStamped, topic_callback)
 

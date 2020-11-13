@@ -20,7 +20,7 @@ class MoveItIkDemo:
         rospy.init_node('ur10_moveit_ik')
                 
         # 初始化需要使用move group控制的机械臂中的arm group
-        arm = moveit_commander.MoveGroupCommander('')
+        arm = moveit_commander.MoveGroupCommander('manipulator')
                 
         # 获取终端link的名称
         end_effector_link = arm.get_end_effector_link()
@@ -49,23 +49,23 @@ class MoveItIkDemo:
         
         # plan 1
 	
-        target_pose.pose.position.x = 0.096
-        target_pose.pose.position.y = -1.1368
-        target_pose.pose.position.z = -0.1795
-        target_pose.pose.orientation.x = 0.61
-        target_pose.pose.orientation.y = -0.5366
-        target_pose.pose.orientation.z = -0.4377
-        target_pose.pose.orientation.w = -0.3850
+        # target_pose.pose.position.x = 0.096
+        # target_pose.pose.position.y = -1.1368
+        # target_pose.pose.position.z = -0.1795
+        # target_pose.pose.orientation.x = 0.61
+        # target_pose.pose.orientation.y = -0.5366
+        # target_pose.pose.orientation.z = -0.4377
+        # target_pose.pose.orientation.w = -0.3850
 
 
         # plan 2
-        # target_pose.pose.position.x = 0.858
-        # target_pose.pose.position.y = 0.0609
-        # target_pose.pose.position.z = 0.467
-        # target_pose.pose.orientation.x = 0.706
-        # target_pose.pose.orientation.y = 0.706
-        # target_pose.pose.orientation.z = -0.014
-        # target_pose.pose.orientation.w = -0.014
+        target_pose.pose.position.x = 0.858
+        target_pose.pose.position.y = 0.0609
+        target_pose.pose.position.z = 0.467
+        target_pose.pose.orientation.x = 0.706
+        target_pose.pose.orientation.y = 0.706
+        target_pose.pose.orientation.z = -0.014
+        target_pose.pose.orientation.w = -0.014
 
         # plan 3
         # target_pose.pose.position.x = 0.92681
@@ -90,7 +90,7 @@ class MoveItIkDemo:
         
         # 按照规划的运动路径控制机械臂运动
         arm.execute(traj)
-        rospy.sleep(3)
+        rospy.sleep(10)
          
         # 控制机械臂终端向右移动5cm
         # 使用shift_pose_target函数，argv[0]=0,1,2,3,4,5;对应x,y,z,r,p,y
