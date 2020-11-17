@@ -138,7 +138,7 @@ class MoveIt_Python_Interface():
 
         pose_goal.position.x = x/10    # 2d simulation only x & y
         pose_goal.position.y = y/10
-        pose_goal.position.z =  0.467
+        pose_goal.position.z =  0
         pose_goal.orientation.w = -0.014
         pose_goal.orientation.x = 0.706
         pose_goal.orientation.y = 0.706
@@ -151,10 +151,11 @@ class MoveIt_Python_Interface():
         group.clear_pose_targets()
 
         current_pose = self.group.get_current_pose().pose
+        joint_values = self.group.get_current_joint_values()
 
         print("current_pose: ", current_pose)
         print("")
-        print("get_goal_position_tolerance: ", self.group.get_goal_position_tolerance())
+        print("get_current_joint_values: ", joint_values)
 
         return all_close(pose_goal, current_pose, 0.01)
 
@@ -208,7 +209,7 @@ def call_back(msg):
     if not isinstance(msg, Pose):
         return
 
-    time.sleep(1)
+    time.sleep(0.25)
 
     print("[x,y] = ", msg.x, msg.y)
     MOVE.go_to_pose_goal(msg.x, msg.y)
@@ -222,7 +223,7 @@ def call_back(msg):
 
 
 def listener():
-	new_pose = rospy.Subscriber("/turtle1/pose", Pose, call_back, queue_size = 1)
+	new_pose = rospy.Subscriber("/turtle1/pose", Pose, call_back, queue_size = 1, tcp_nodelay = True)
 	rospy.spin()
 
 

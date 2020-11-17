@@ -8,7 +8,7 @@ https://answers.ros.org/question/320613/catkin_make-vs-catkin_make_isolated-whic
 Bugs:
 1. Failed to import pyassimp, see https://github.com/ros-planning/moveit/issues/86 for more info
 
-2. CALL go_to_joint_state(). Segmentation fault (core dumped)
+2. Unable to identify any set of controllers that can actuate the specified joints
 
 
 roslaunch ur_planning start_demo.launch
