@@ -14,8 +14,8 @@ class MoveItFkDemo:
         rospy.init_node('ur10_moveit_fk', anonymous=True)
  
         # 初始化需要使用move group控制的机械臂中的arm group
-        arm = moveit_commander.MoveGroupCommander('arm')
-        # arm = moveit_commander.MoveGroupCommander('manipulator')
+        # arm = moveit_commander.MoveGroupCommander('arm')
+        arm = moveit_commander.MoveGroupCommander('manipulator')
         
         # 初始化需要使用move group控制的机械臂中的gripper group
         # gripper = moveit_commander.MoveGroupCommander('gripper')

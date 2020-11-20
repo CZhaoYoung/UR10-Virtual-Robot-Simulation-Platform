@@ -43,12 +43,15 @@ def all_close(goal, actual, tolerance):
     return True
 
 
-class MoveIt_Python_Interface():
+class MoveIt_Python_Interface(object):
     def __init__(self):
+    	super(MoveIt_Python_Interface, self).__init__()
         # --SETUP--
         # Initialize moveit_commander and rospy_nore
         moveit_commander.roscpp_initialize(sys.argv)
-        rospy.init_node('ur10_moveit_ik', anonymous = True)
+        rospy.init_node('ur10_moveit_ik', anonymous=True)
+        # moveit_commander.roscpp_initialize(sys.argv)
+        # rospy.init_node('ur10_moveit_ik', anonymous = True)
         
         # Instantiate a `RobotCommander`_ object. This object is the outer-level interface to the robot
         robot = moveit_commander.RobotCommander()
@@ -136,9 +139,15 @@ class MoveIt_Python_Interface():
         # pose_goal.position.y = 0.1
         # pose_goal.position.z = 0.4
 
+<<<<<<< HEAD
         pose_goal.position.x = value_x/2    # 2d simulation only x & y
         pose_goal.position.y = value_y/2
         pose_goal.position.z = value_z/2
+=======
+        pose_goal.position.x = x/10    # 2d simulation only x & y
+        pose_goal.position.y = y/10
+        pose_goal.position.z =  0
+>>>>>>> 5dc06b143624db7ff61c4e320935dadf6c1a50ff
         pose_goal.orientation.w = -0.014
         pose_goal.orientation.x = 0.706
         pose_goal.orientation.y = 0.706
@@ -151,68 +160,79 @@ class MoveIt_Python_Interface():
         group.clear_pose_targets()
 
         current_pose = self.group.get_current_pose().pose
+        joint_values = self.group.get_current_joint_values()
 
         print("current_pose: ", current_pose)
         print("")
-        print("get_goal_position_tolerance: ", self.group.get_goal_position_tolerance())
+        print("get_current_joint_values: ", joint_values)
 
         return all_close(pose_goal, current_pose, 0.01)
 
-	def plan_cartesian_path(self, scale = 1):
 
-		group = self.group
-		# --CARTESIAN PLANNING-
-		waypoints = []
+    def hello(self):
+    	print('hello')
+    	return
+	
+    def plan_cartesian(self, scale = 1):
+	group = self.group
 
-		wpose = group.get_current_pose().pose
-		wpose.position.z -= scale * 0.1  # First move up (z)
-		wpose.position.y += scale * 0.2  # and sideways (y)
+	waypoints = []
+	wpose = group.get_current_pose().pose
+	wpose.position.z -= scale * 0.1
+	wpose.position.y += scale * 0.2
 
-		waypoints.append(copy.deepcopy(wpose))
+	waypoints.append(copy.deepcopy(wpose))
 
-		wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
-		waypoints.append(copy.deepcopy(wpose))
+	wpose.position.x += scale * 0.1
+	waypoints.append(copy.deepcopy(wpose))
 
-		wpose.position.y -= scale * 0.1  # Third move sideways (y)
-		waypoints.append(copy.deepcopy(wpose))
+	wpose.position.y -= scale * 0.1
+	waypoints.append(copy.deepcopy(wpose))
 
-		(plan, fraction) = group.compute_cartesian_path(
-		                                   waypoints,   # waypoints to follow
-		                                   0.01,        # eef_step 1cm
-		                                   0.0)         # jump_threshold
+	(plan, fraction) = group.compute_cartesian_path(
+							waypoints, 		# waypoints to follow
+							0.01,			# eef_step 1cm
+							0.0)			# jump_threshold
+	return plan, fraction
 
-		# Note: We are just planning, not asking move_group to actually move the robot yet:
-		return plan, fraction
+    def display_trajectory(self, plan):
 
-	def display_trajectory(self, plan):
+	robot = self.robot
+	display_trajectory_publisher = self.display_trajectory_publisher
 
-		robot = self.robot
-		display_trajectory_publisher = self.display_trajectory_publisher
+	# --DISPLAY A TRAJECTORY
+	display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+	display_trajectory.trajectory_start = robot.get_current_state()
+	display_trajectory.trajectory.append(plan)
 
-		# --DISPLAY A TRAJECTORY
-		display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-		display_trajectory.trajectory_start = robot.get_current_state()
-		display_trajectory.trajectory.append(plan)
+	display_trajectory_publisher.publish(display_trajectory)
 
-		display_trajectory_publisher.publish(display_trajectory)
+    def execute_plan(self, plan):
 
-	def execute_plan(self, plan):
+	group = self.group
+	group.execute(plan, wait = True)
 
-		group = self.group
-		group.execute(plan, wait = True)
 
 
 global MOVE
 MOVE = MoveIt_Python_Interface()
+print(dir(MOVE))
 
 def call_back(msg):
     if not isinstance(msg, PoseStamped):
         return
 
+<<<<<<< HEAD
     time.sleep(1)
     new_msg  = copy.deepcopy(msg)
     print("[x,y] = ", new_msg.pose.position.x, new_msg.pose.position.y, new_msg.pose.position.z)
     MOVE.go_to_pose_goal(new_msg.pose.position.x, new_msg.pose.position.y, new_msg.pose.position.z)
+=======
+    time.sleep(0.25)
+
+    print("[x,y] = ", msg.x, msg.y)
+    MOVE.go_to_pose_goal(msg.x, msg.y)
+>>>>>>> 5dc06b143624db7ff61c4e320935dadf6c1a50ff
 
     # new_msg  = copy.deepcopy(msg)
     # # test 1
@@ -223,7 +243,11 @@ def call_back(msg):
 
 
 def listener():
+<<<<<<< HEAD
 	new_pose = rospy.Subscriber("/vrpn_client_node/cf4/pose", PoseStamped, call_back, queue_size=1)
+=======
+	new_pose = rospy.Subscriber("/turtle1/pose", Pose, call_back, queue_size = 1, tcp_nodelay = True)
+>>>>>>> 5dc06b143624db7ff61c4e320935dadf6c1a50ff
 	rospy.spin()
 
 
@@ -232,7 +256,6 @@ def main():
     try:
 		print ("============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ...")
 		raw_input()
-		MOVE = MoveIt_Python_Interface()
 
 		print ("============ Press `Enter` to execute a movement using a joint state goal ...")
 		raw_input()
@@ -243,22 +266,22 @@ def main():
 		MOVE.go_to_pose_goal(1.716, 0.1218, 0.76)
 		MOVE.go_home()
 
-		# print ("============ Press `Enter` to plan and display a Cartesian path ...")
-		# raw_input()
-		# cartesian_plan, fraction = MOVE.plan_cartesian_path()
-
-		# print ("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
-		# raw_input()
-		# MOVE.display_trajectory(cartesian_plan)
-
-		# print ("============ Press `Enter` to execute a saved path ...")
-		# raw_input()
-		# MOVE.execute_plan(cartesian_plan)
-
-		print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		print ("============ Press `Enter` to plan and display a Cartesian path ...")
 		raw_input()
-		listener()
-		MOVE.go_home()
+		(cartesian_plan, fraction) = MOVE.plan_cartesian()
+
+		print ("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
+		raw_input()
+		MOVE.display_trajectory(cartesian_plan)
+
+		print ("============ Press `Enter` to execute a saved path ...")
+		raw_input()
+		MOVE.execute_plan(cartesian_plan)
+
+		# print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		# raw_input()
+		# listener()
+		# MOVE.go_home()
 
     except rospy.ROSInterruptException:
         return
@@ -269,3 +292,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

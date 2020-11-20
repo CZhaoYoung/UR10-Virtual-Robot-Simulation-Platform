@@ -22,7 +22,7 @@ def test_callback(msg):
     if not isinstance(msg, PoseStamped):
         return
 
-    time.sleep(0.5)
+    time.sleep(0.25)
     new_msg  = copy.deepcopy(msg)
     print("[x]=", new_msg.pose.position.x)
     # print("[x, y, z]=", new_msg.pose.position.x, new_msg.pose.position.y, new_msg.pose.position.z)
