@@ -232,16 +232,16 @@ def main():
     try:
 		print ("============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ...")
 		raw_input()
-		MOVE = MoveIt_Python_Interface()
+		# MOVE = MoveIt_Python_Interface()
 
-		print ("============ Press `Enter` to execute a movement using a joint state goal ...")
-		raw_input()
-		MOVE.go_to_joint_state()
+		# print ("============ Press `Enter` to execute a movement using a joint state goal ...")
+		# raw_input()
+		# MOVE.go_to_joint_state()
 
-		print ("============ Press `Enter` to execute a movement using a pose goal ...")
-		raw_input()
-		MOVE.go_to_pose_goal(8.58, 0.609)
-		MOVE.go_home()
+		# print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		# raw_input()
+		# MOVE.go_to_pose_goal(8.58, 0.609)
+		# MOVE.go_home()
 
 		# print ("============ Press `Enter` to plan and display a Cartesian path ...")
 		# raw_input()
