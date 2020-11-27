@@ -10,7 +10,6 @@ import moveit_msgs.msg
 import geometry_msgs.msg
 from turtlesim.msg import Pose
 
-import listener
 
 from math import pi
 from std_msgs.msg import String
@@ -49,7 +48,7 @@ class MoveIt_Python_Interface(object):
         # --SETUP--
         # Initialize moveit_commander and rospy_nore
         moveit_commander.roscpp_initialize(sys.argv)
-        rospy.init_node('ur10_moveit_ik', anonymous=True)
+        rospy.init_node('ur10_moveit', anonymous=True)
         # moveit_commander.roscpp_initialize(sys.argv)
         # rospy.init_node('ur10_moveit_ik', anonymous = True)
         
@@ -67,6 +66,11 @@ class MoveIt_Python_Interface(object):
         display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
                                                         moveit_msgs.msg.DisplayTrajectory,
                                                         queue_size=20)
+
+        scene_publisher = rospy.Publisher('planning_scene', 
+                                            moveit_msgs.msg.PlanningScene, 
+                                            queue_size = 5)
+
         # --BASIC_INFO--
         # the reference name of the robot
         planning_frame = group.get_planning_frame()
@@ -86,14 +90,16 @@ class MoveIt_Python_Interface(object):
         print("")
 
         # Misc variables
-        self.box_name = ''
         self.robot = robot
         self.scene = scene
         self.group = group
         self.display_trajectory_publisher = display_trajectory_publisher
+        self.scene_publisher = scene_publisher
         self.planning_frame = planning_frame
         self.eef_link = end_effector_link
         self.group_names = group_names
+
+        self.colors = dict()
 
     def go_home(self):
         group = self.group
@@ -163,9 +169,52 @@ class MoveIt_Python_Interface(object):
         return all_close(pose_goal, current_pose, 0.01)
 
 
-    def hello(self):
-    	print('hello')
-    	return
+    def set_color(self, name, r, g, b, a = 0.9):
+        # moveit color object
+        color = moveit_msgs.msg.ObjectColor()
+
+        color.id = name
+        color.color.r = r
+        color.color.g = g
+        color.color.b = b
+        color.color.a = a
+
+        # update color
+        self.colors[name] = color
+
+    def send_color(self):
+        # moveit scene object
+        p = moveit_msgs.msg.PlanningScene()
+
+        p.is_diff = True
+
+        #publish color
+        for color in self.colors.values():
+            p.object_colors.append(color)
+
+        self.scene_publisher.publish(p)
+
+    def add_object(self):
+        planning_frame = self.planning_frame
+        scene = self.scene
+
+        # table_id
+        table_id = 'table'
+        
+        #table_size
+        table_size = [2, 2, 0.02]   
+
+        table_pose = geometry_msgs.msg.PoseStamped()
+        table_pose.header.frame_id = planning_frame
+        table_pose.pose.position.x = 0
+        table_pose.pose.position.y = 0
+        table_pose.pose.position.z = 0
+        table_pose.pose.orientation.w = 1
+        scene.add_box(table_id, table_pose, table_size)
+
+        self.set_color(table_id, 0.9, 0.9, 0.9, 1.0)
+        self.send_color()
+
 	
     def plan_cartesian(self, scale = 1):
 	group = self.group
@@ -205,11 +254,11 @@ class MoveIt_Python_Interface(object):
 
 	group = self.group
 	group.execute(plan, wait = True)
+# END--MoveIt_Python_Interface--
 
 
 global MOVE
 MOVE = MoveIt_Python_Interface()
-print(dir(MOVE))
 
 def call_back(msg):
     if not isinstance(msg, Pose):
@@ -234,36 +283,36 @@ def listener():
 
 
 def main():
-
     try:
 		print ("============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ...")
 		raw_input()
+       	 	MOVE.add_object()
 
 		print ("============ Press `Enter` to execute a movement using a joint state goal ...")
 		raw_input()
 		MOVE.go_to_joint_state()
 
-		print ("============ Press `Enter` to execute a movement using a pose goal ...")
-		raw_input()
-		MOVE.go_to_pose_goal(8.58, 0.609)
-		MOVE.go_home()
-
-		print ("============ Press `Enter` to plan and display a Cartesian path ...")
-		raw_input()
-		(cartesian_plan, fraction) = MOVE.plan_cartesian()
-
-		print ("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
-		raw_input()
-		MOVE.display_trajectory(cartesian_plan)
-
-		print ("============ Press `Enter` to execute a saved path ...")
-		raw_input()
-		MOVE.execute_plan(cartesian_plan)
-
 		# print ("============ Press `Enter` to execute a movement using a pose goal ...")
 		# raw_input()
-		# listener()
+		# MOVE.go_to_pose_goal(8.58, 0.609)
 		# MOVE.go_home()
+
+		# print ("============ Press `Enter` to plan and display a Cartesian path ...")
+		# raw_input()
+		# (cartesian_plan, fraction) = MOVE.plan_cartesian()
+
+		# print ("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
+		# raw_input()
+		# MOVE.display_trajectory(cartesian_plan)
+
+		# print ("============ Press `Enter` to execute a saved path ...")
+		# raw_input()
+		# MOVE.execute_plan(cartesian_plan)
+
+		print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		raw_input()
+		listener()
+		MOVE.go_home()
 
     except rospy.ROSInterruptException:
         return
