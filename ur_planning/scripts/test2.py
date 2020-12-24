@@ -8,6 +8,7 @@ import time
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
+from geometry_msgs.msg import PoseStamped
 from turtlesim.msg import Pose
 
 
@@ -131,7 +132,7 @@ class MoveIt_Python_Interface(object):
         current_joints = self.group.get_current_joint_values()
         return all_close(joint_goal, current_joints, 0.01)
 
-    def go_to_pose_goal(self, x, y):
+    def go_to_pose_goal(self, value_x, value_y, value_z):
 
         group = self.group
         eef_link = self.eef_link
@@ -145,9 +146,11 @@ class MoveIt_Python_Interface(object):
         # pose_goal.position.y = 0.1
         # pose_goal.position.z = 0.4
 
-        pose_goal.position.x = x/10    # 2d simulation only x & y
-        pose_goal.position.y = y/10
-        pose_goal.position.z =  0.2
+        pose_goal.position.x = value_x/2    
+        pose_goal.position.y = value_y/2
+        pose_goal.position.z = value_z/2
+        # pose_goal.position.z = 0 			# 2d simulation only x & y
+
         pose_goal.orientation.w = -0.014
         pose_goal.orientation.x = 0.706
         pose_goal.orientation.y = 0.706
@@ -257,13 +260,18 @@ class MoveIt_Python_Interface(object):
 # END--MoveIt_Python_Interface--
 
 
+
 global MOVE
 MOVE = MoveIt_Python_Interface()
 
 def call_back(msg):
-    if not isinstance(msg, Pose):
+    if not isinstance(msg, PoseStamped):
         return
 
+    # time.sleep(1)
+    # new_msg  = copy.deepcopy(msg)
+    # print("[x,y] = ", new_msg.pose.position.x, new_msg.pose.position.y, new_msg.pose.position.z)
+    # MOVE.go_to_pose_goal(new_msg.pose.position.x, new_msg.pose.position.y, new_msg.pose.position.z)
     time.sleep(0.25)
 
     print("[x,y] = ", msg.x, msg.y)
@@ -278,6 +286,7 @@ def call_back(msg):
 
 
 def listener():
+	# new_pose = rospy.Subscriber("/vrpn_client_node/cf4/pose", PoseStamped, call_back, queue_size=1)
 	new_pose = rospy.Subscriber("/turtle1/pose", Pose, call_back, queue_size = 1, tcp_nodelay = True)
 	rospy.spin()
 
@@ -294,7 +303,7 @@ def main():
 
 		print ("============ Press `Enter` to execute a movement using a pose goal ...")
 		raw_input()
-		MOVE.go_to_pose_goal(8.58, 0.609)
+		MOVE.go_to_pose_goal(1.716, 0.1218, 0.76)
 		MOVE.go_home()
 
 		# print ("============ Press `Enter` to plan and display a Cartesian path ...")

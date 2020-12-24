@@ -3,7 +3,7 @@ import rospy
 import time
 import copy
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, PoseStamped
 from turtlesim.msg import Pose
 
 def topic_callback(msg):
@@ -12,19 +12,23 @@ def topic_callback(msg):
     print("x =", msg.x)
     print("y =", msg.y)
     print("theta =", msg.theta)
-    time.sleep(5)
+    # time.sleep()
  
 def callback(data):
     rospy.loginfo("I heard %s",data.x)
     time.sleep(10)
 
 def test_callback(msg):
-    if not isinstance(msg, Pose):
+    if not isinstance(msg, PoseStamped):
         return
 
-    time.sleep(2)
+    time.sleep(0.25)
     new_msg  = copy.deepcopy(msg)
-    print(new_msg.x, new_msg.y, new_msg.theta)
+    print("[x]=", new_msg.pose.position.x)
+    # print("[x, y, z]=", new_msg.pose.position.x, new_msg.pose.position.y, new_msg.pose.position.z)
+    # print("[w, x, y, z]=",  new_msg.pose.orientation.w, new_msg.pose.orientation.x, 
+                            # new_msg.pose.orientation.y, new_msg.pose.orientation.z)
+    print("---------------------------------------------------")
 
 def listener():
 
@@ -35,9 +39,9 @@ def listener():
     # run simultaneously.
     rospy.init_node('listener', anonymous=True)
 
-    NewPose = rospy.Subscriber("/turtle1/pose", Pose, test_callback, queue_size=1)
+    # NewPose = rospy.Subscriber("/turtle1/pose", Pose, test_callback, queue_size=1)
 
-    # NewPose = rospy.Subscriber("/vrpn_client_node/cf4/pose", PoseStamped, topic_callback)
+    NewPose = rospy.Subscriber("/vrpn_client_node/cf1120/pose", PoseStamped, test_callback, queue_size=1)
 
     # print(NewPose.x, NewPose.y, NewPose.z)
     # spin() simply keeps python from exiting until this node is stopped
