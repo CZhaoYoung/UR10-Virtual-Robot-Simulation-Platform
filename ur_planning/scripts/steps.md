@@ -17,20 +17,6 @@ rosrun ur_planning test2.py
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 API
 rospy 
 tf2_ros 
@@ -49,4 +35,99 @@ tf2_ros
 
 ##pose_tf2 _listener.py
 	usage: 	1.
+
+
+
+
+
+
+
+
+##ROS Message Type
+**trajectory_msgs**
+    JointTrajectory
+    JointTrajectoryPoint
+        float64[] positions
+        float64[] velocities
+        float64[] accelerations
+        float64[] effort
+        duration time_from_start
+
+**moveit_msgs**
+    DisplayTrajectory
+    PlanningScene
+
+**geometry_msgs**
+    Accel
+        geometry_msgs/Vector3 linear
+        geometry_msgs/Vector3 angular
+    Pose
+        geometry_msgs/Point position
+        geometry_msgs/Quaternion orientation
+    Twist(expresses velocity in free space)
+        geometry_msgs/Vector3 linear
+        geometry_msgs/Vector3 angular
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
