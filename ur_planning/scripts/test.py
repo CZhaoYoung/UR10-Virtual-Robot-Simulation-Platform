@@ -77,6 +77,7 @@ class MoveItIkDemo:
         # 关闭并退出moveit
         moveit_commander.roscpp_shutdown()
         moveit_commander.os._exit(0)
- 
+
+
 if __name__ == "__main__":
     MoveItIkDemo()

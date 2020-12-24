@@ -147,7 +147,7 @@ class MoveIt_Python_Interface(object):
 
         pose_goal.position.x = x/10    # 2d simulation only x & y
         pose_goal.position.y = y/10
-        pose_goal.position.z =  0
+        pose_goal.position.z =  0.2
         pose_goal.orientation.w = -0.014
         pose_goal.orientation.x = 0.706
         pose_goal.orientation.y = 0.706
@@ -208,7 +208,7 @@ class MoveIt_Python_Interface(object):
         table_pose.header.frame_id = planning_frame
         table_pose.pose.position.x = 0
         table_pose.pose.position.y = 0
-        table_pose.pose.position.z = 0
+        table_pose.pose.position.z = -0.02
         table_pose.pose.orientation.w = 1
         scene.add_box(table_id, table_pose, table_size)
 
@@ -292,10 +292,10 @@ def main():
 		raw_input()
 		MOVE.go_to_joint_state()
 
-		# print ("============ Press `Enter` to execute a movement using a pose goal ...")
-		# raw_input()
-		# MOVE.go_to_pose_goal(8.58, 0.609)
-		# MOVE.go_home()
+		print ("============ Press `Enter` to execute a movement using a pose goal ...")
+		raw_input()
+		MOVE.go_to_pose_goal(8.58, 0.609)
+		MOVE.go_home()
 
 		# print ("============ Press `Enter` to plan and display a Cartesian path ...")
 		# raw_input()
