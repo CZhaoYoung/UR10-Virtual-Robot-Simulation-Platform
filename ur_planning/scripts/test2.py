@@ -146,9 +146,14 @@ class MoveIt_Python_Interface(object):
         # pose_goal.position.y = 0.1
         # pose_goal.position.z = 0.4
 
-        pose_goal.position.x = value_x/2    
-        pose_goal.position.y = value_y/2
+        pose_goal.position.x = value_x/10    
+        pose_goal.position.y = value_y/10
         pose_goal.position.z = value_z/2
+
+        # for cf4
+        # pose_goal.position.x = value_x/2    
+        # pose_goal.position.y = value_y/2
+        # pose_goal.position.z = value_z/2
         # pose_goal.position.z = 0 			# 2d simulation only x & y
 
         pose_goal.orientation.w = -0.014
@@ -265,7 +270,7 @@ global MOVE
 MOVE = MoveIt_Python_Interface()
 
 def call_back(msg):
-    if not isinstance(msg, PoseStamped):
+    if not isinstance(msg, Pose):
         return
 
     # time.sleep(1)
@@ -275,7 +280,7 @@ def call_back(msg):
     time.sleep(0.25)
 
     print("[x,y] = ", msg.x, msg.y)
-    MOVE.go_to_pose_goal(msg.x, msg.y)
+    MOVE.go_to_pose_goal(msg.x, msg.y, 0.4)
 
     # new_msg  = copy.deepcopy(msg)
     # # test 1
